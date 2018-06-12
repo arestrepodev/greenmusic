@@ -1,60 +1,77 @@
-<template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
-  </div>
+<template lang="pug">
+  #app
+    GmHeader
+    main
+      input(type="text", placeholder="Buscar canciones...", v-model="searchQuery")
+      a(@click="search") Buscar
+      p
+        small {{ searchMessage }}
+      section
+        div(v-for="t in tracks")
+          GmTrack(
+            v-bind:track="t",
+            v-on:select="setSelectedTrack"
+          )
 </template>
 
 <script>
+// UI
+import GmHeader from '@/components/layout/Header'
+import GmSidebar from '@/components/layout/Sidebar'
+import GmFooter from '@/components/layout/Footer'
+import GmTrack from '@/components/Track'
+// Data
+import trackService from '@/services/track'
 export default {
   name: 'app',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      searchQuery: '',
+      tracks: [],
+      isLoading: false,
+      selectedTrack: ''
     }
+  },
+  computed: {
+    searchMessage () {
+      return `Encontramos ${this.tracks.length} resultados`
+    }
+  },
+  watch: {
+
+  },
+  methods: {
+    search () {
+      if (!this.searchQuery) { return }
+      this.isLoading = true
+      trackService.search(this.searchQuery).then((res) => {
+        this.isLoading = false
+        this.tracks = res.tracks.items
+      })
+    },
+    setSelectedTrack (id) {
+      this.selectedTrack = id
+    }
+  },
+  components: {
+    GmHeader,
+    GmSidebar,
+    GmFooter,
+    GmTrack
   }
 }
 </script>
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="stylus" scoped>
+#app
+  font-family 'Avenir', Helvetica, Arial, sans-serif
+  -webkit-font-smoothing antialiased
+  -moz-osx-font-smoothing grayscale
+  text-align center
+  color #2c3e50
+  margin-top 60px
 
-h1, h2 {
-  font-weight: normal;
-}
+a
+  cursor pointer
 
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-
-a {
-  color: #42b983;
-}
 </style>
