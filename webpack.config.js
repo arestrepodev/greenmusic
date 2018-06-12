@@ -11,11 +11,17 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(js|vue)$/,
+        loader: 'eslint-loader',
+        enforce: 'pre',
+        include: [path.resolve(__dirname, './src')]
+      },
+      {
         test: /\.css$/,
         use: [
           'vue-style-loader',
           'css-loader'
-        ],
+        ]
       },
       {
         test: /\.scss$/,
@@ -23,7 +29,7 @@ module.exports = {
           'vue-style-loader',
           'css-loader',
           'sass-loader'
-        ],
+        ]
       },
       {
         test: /\.sass$/,
@@ -31,7 +37,23 @@ module.exports = {
           'vue-style-loader',
           'css-loader',
           'sass-loader?indentedSyntax'
-        ],
+        ]
+      },
+      {
+        test: /\.stylus$/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
+          'stylus-loader'
+        ]
+      },
+      {
+        test: /\.styl$/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
+          'stylus-loader'
+        ]
       },
       {
         test: /\.vue$/,
@@ -50,6 +72,11 @@ module.exports = {
               'vue-style-loader',
               'css-loader',
               'sass-loader?indentedSyntax'
+            ],
+            'stylus': [
+              'vue-style-loader',
+              'css-loader',
+              'stylus-loader'
             ]
           }
           // other vue-loader options go here
@@ -71,13 +98,14 @@ module.exports = {
   },
   resolve: {
     alias: {
-      'vue$': 'vue/dist/vue.esm.js'
+      'vue$': 'vue/dist/vue.esm.js',
+      '@': path.resolve(__dirname, './src')
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
   devServer: {
     historyApiFallback: true,
-    noInfo: true,
+    noInfo: false,
     overlay: true
   },
   performance: {
